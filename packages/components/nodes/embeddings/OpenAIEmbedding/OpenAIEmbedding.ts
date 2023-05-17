@@ -22,11 +22,6 @@ class OpenAIEmbedding_Embeddings implements INode {
         this.baseClasses = [this.type, ...getBaseClasses(OpenAIEmbeddings)]
         this.inputs = [
             {
-                label: 'OpenAI Api Key',
-                name: 'openAIApiKey',
-                type: 'password'
-            },
-            {
                 label: 'Strip New Lines',
                 name: 'stripNewLines',
                 type: 'boolean',
@@ -51,14 +46,11 @@ class OpenAIEmbedding_Embeddings implements INode {
     }
 
     async init(nodeData: INodeData): Promise<any> {
-        const openAIApiKey = nodeData.inputs?.openAIApiKey as string
         const stripNewLines = nodeData.inputs?.stripNewLines as boolean
         const batchSize = nodeData.inputs?.batchSize as string
         const timeout = nodeData.inputs?.timeout as string
 
-        const obj: Partial<OpenAIEmbeddingsParams> & { openAIApiKey?: string } = {
-            openAIApiKey
-        }
+        const obj: Partial<OpenAIEmbeddingsParams> = {}
 
         if (stripNewLines) obj.stripNewLines = stripNewLines
         if (batchSize) obj.batchSize = parseInt(batchSize, 10)

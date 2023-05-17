@@ -103,12 +103,6 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "OpenAI Api Key",
-                        "name": "openAIApiKey",
-                        "type": "password",
-                        "id": "chatOpenAI_0-input-openAIApiKey-password"
-                    },
-                    {
                         "label": "Model Name",
                         "name": "modelName",
                         "type": "options",
@@ -290,12 +284,6 @@
                 "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
                     {
-                        "label": "OpenAI Api Key",
-                        "name": "openAIApiKey",
-                        "type": "password",
-                        "id": "openAIEmbeddings_0-input-openAIApiKey-password"
-                    },
-                    {
                         "label": "Strip New Lines",
                         "name": "stripNewLines",
                         "type": "boolean",
@@ -362,12 +350,6 @@
                 "category": "Chat Models",
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
-                    {
-                        "label": "OpenAI Api Key",
-                        "name": "openAIApiKey",
-                        "type": "password",
-                        "id": "chatOpenAI_1-input-openAIApiKey-password"
-                    },
                     {
                         "label": "Model Name",
                         "name": "modelName",

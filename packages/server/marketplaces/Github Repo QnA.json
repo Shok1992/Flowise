@@ -211,12 +211,6 @@
                 "description": "Wrapper around OpenAI large language models",
                 "inputParams": [
                     {
-                        "label": "OpenAI Api Key",
-                        "name": "openAIApiKey",
-                        "type": "password",
-                        "id": "openAI_1-input-openAIApiKey-password"
-                    },
-                    {
                         "label": "Model Name",
                         "name": "modelName",
                         "type": "options",
@@ -355,12 +349,6 @@
                 "category": "Embeddings",
                 "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
-                    {
-                        "label": "OpenAI Api Key",
-                        "name": "openAIApiKey",
-                        "type": "password",
-                        "id": "openAIEmbeddings_1-input-openAIApiKey-password"
-                    },
                     {
                         "label": "Strip New Lines",
                         "name": "stripNewLines",

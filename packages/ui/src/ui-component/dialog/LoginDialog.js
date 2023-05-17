@@ -1,57 +1,28 @@
 import { createPortal } from 'react-dom'
-import { useState } from 'react'
 import PropTypes from 'prop-types'
 
 import { Dialog, DialogActions, DialogContent, Typography, DialogTitle } from '@mui/material'
 import { StyledButton } from 'ui-component/button/StyledButton'
-import { Input } from 'ui-component/input/Input'
 
-const LoginDialog = ({ show, dialogProps, onConfirm }) => {
+const { REACT_APP_TELEGRAM_BOT_ID } = process.env
+
+const LoginDialog = ({ show, dialogProps }) => {
     const portalElement = document.getElementById('portal')
-    const usernameInput = {
-        label: 'Username',
-        name: 'username',
-        type: 'string',
-        placeholder: 'john doe'
-    }
-    const passwordInput = {
-        label: 'Password',
-        name: 'password',
-        type: 'password'
-    }
-    const [usernameVal, setUsernameVal] = useState('')
-    const [passwordVal, setPasswordVal] = useState('')
 
     const component = show ? (
-        <Dialog
-            onKeyUp={(e) => {
-                if (e.key === 'Enter') {
-                    onConfirm(usernameVal, passwordVal)
-                }
-            }}
-            open={show}
-            fullWidth
-            maxWidth='xs'
-            aria-labelledby='alert-dialog-title'
-            aria-describedby='alert-dialog-description'
-        >
+        <Dialog open={show} fullWidth maxWidth='xs' aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
                 {dialogProps.title}
             </DialogTitle>
             <DialogContent>
-                <Typography>Username</Typography>
-                <Input
-                    inputParam={usernameInput}
-                    onChange={(newValue) => setUsernameVal(newValue)}
-                    value={usernameVal}
-                    showDialog={false}
-                />
-                <div style={{ marginTop: 20 }}></div>
-                <Typography>Password</Typography>
-                <Input inputParam={passwordInput} onChange={(newValue) => setPasswordVal(newValue)} value={passwordVal} />
+                <Typography>Sign in using your Telegram account</Typography>
             </DialogContent>
             <DialogActions>
-                <StyledButton variant='contained' onClick={() => onConfirm(usernameVal, passwordVal)}>
+                <StyledButton
+                    variant='contained'
+                    href={`https://t.me/${REACT_APP_TELEGRAM_BOT_ID}?start=token${dialogProps.token}`}
+                    target={'_blank'}
+                >
                     {dialogProps.confirmButtonName}
                 </StyledButton>
             </DialogActions>

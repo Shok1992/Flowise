@@ -3,8 +3,8 @@ import multer from 'multer'
 import path from 'path'
 import cors from 'cors'
 import http from 'http'
+import crypto from 'crypto'
 import * as fs from 'fs'
-import basicAuth from 'express-basic-auth'
 
 import { IChatFlow, IncomingInput, IReactFlowNode, IReactFlowObject, INodeData, IDatabaseExport } from './Interface'
 import {
@@ -28,6 +28,7 @@ import {
 import { cloneDeep } from 'lodash'
 import { getDataSource } from './DataSource'
 import { NodesPool } from './NodesPool'
+import { User } from './entity/User'
 import { ChatFlow } from './entity/ChatFlow'
 import { ChatMessage } from './entity/ChatMessage'
 import { ChatflowPool } from './ChatflowPool'
@@ -71,21 +72,43 @@ export class App {
         // Allow access from *
         this.app.use(cors())
 
-        if (process.env.USERNAME && process.env.PASSWORD) {
-            const username = process.env.USERNAME.toLocaleLowerCase()
-            const password = process.env.PASSWORD.toLocaleLowerCase()
-            const basicAuthMiddleware = basicAuth({
-                users: { [username]: password }
-            })
-            const whitelistURLs = ['/api/v1/prediction/', '/api/v1/node-icon/']
-            this.app.use((req, res, next) => {
-                if (req.url.includes('/api/v1/')) {
-                    whitelistURLs.some((url) => req.url.includes(url)) ? next() : basicAuthMiddleware(req, res, next)
+        const whitelistURLs = ['/api/v1/user', '/api/v1/prediction/', '/api/v1/node-icon/']
+        this.app.use(async (req, res, next) => {
+            if (req.url.includes('/api/v1/')) {
+                if (whitelistURLs.some((url) => req.url.includes(url))) {
+                    next()
+                } else if (!req.headers.user) {
+                    const token = req.header('token')
+                    if (token) {
+                        const user = await this.AppDataSource.getRepository(User).findOneBy({ token: token })
+                        if (user && user.id) {
+                            req.headers.user = user.id
+                            next()
+                        } else {
+                            res.sendStatus(401)
+                        }
+                    } else {
+                        res.sendStatus(401)
+                    }
                 } else next()
-            })
-        }
+            } else next()
+        })
 
         const upload = multer({ dest: `${path.join(__dirname, '..', 'uploads')}/` })
+
+        // ----------------------------------------
+        // User
+        // ----------------------------------------
+
+        // Create user
+        this.app.post('/api/v1/user', async (req: Request, res: Response) => {
+            const token = req.header('token')
+            const id = req.body['id']
+            const user = new User()
+            Object.assign(user, { id: id, token: token })
+            await this.AppDataSource.getRepository(User).save(user)
+            return res.json(user)
+        })
 
         // ----------------------------------------
         // Nodes
@@ -135,14 +158,15 @@ export class App {
 
         // Get all chatflows
         this.app.get('/api/v1/chatflows', async (req: Request, res: Response) => {
-            const chatflows: IChatFlow[] = await this.AppDataSource.getRepository(ChatFlow).find()
+            const chatflows: IChatFlow[] = await this.AppDataSource.getRepository(ChatFlow).findBy({ owner: req.headers.user as string })
             return res.json(chatflows)
         })
 
         // Get specific chatflow via id
         this.app.get('/api/v1/chatflows/:id', async (req: Request, res: Response) => {
             const chatflow = await this.AppDataSource.getRepository(ChatFlow).findOneBy({
-                id: req.params.id
+                id: req.params.id,
+                owner: req.headers.user as string
             })
             if (chatflow) return res.json(chatflow)
             return res.status(404).send(`Chatflow ${req.params.id} not found`)
@@ -152,7 +176,7 @@ export class App {
         this.app.post('/api/v1/chatflows', async (req: Request, res: Response) => {
             const body = req.body
             const newChatFlow = new ChatFlow()
-            Object.assign(newChatFlow, body)
+            Object.assign(newChatFlow, body, { owner: req.headers.user as string })
 
             const chatflow = this.AppDataSource.getRepository(ChatFlow).create(newChatFlow)
             const results = await this.AppDataSource.getRepository(ChatFlow).save(chatflow)
@@ -163,7 +187,8 @@ export class App {
         // Update chatflow
         this.app.put('/api/v1/chatflows/:id', async (req: Request, res: Response) => {
             const chatflow = await this.AppDataSource.getRepository(ChatFlow).findOneBy({
-                id: req.params.id
+                id: req.params.id,
+                owner: req.headers.user as string
             })
 
             if (!chatflow) {
@@ -186,7 +211,32 @@ export class App {
 
         // Delete chatflow via id
         this.app.delete('/api/v1/chatflows/:id', async (req: Request, res: Response) => {
-            const results = await this.AppDataSource.getRepository(ChatFlow).delete({ id: req.params.id })
+            const results = await this.AppDataSource.getRepository(ChatFlow).delete({
+                id: req.params.id,
+                owner: req.headers.user as string
+            })
+            return res.json(results)
+        })
+
+        // Import chatflow via id if needed
+        this.app.post('/api/v1/import/:id', async (req: Request, res: Response) => {
+            const userId = req.headers.user as string
+            const chatflow = await this.AppDataSource.getRepository(ChatFlow).findOneBy({
+                id: req.params.id
+            })
+
+            if (!chatflow) return res.status(404).send(`Chatflow ${req.params.id} not found`)
+            if (chatflow.owner === userId) return res.json(chatflow)
+
+            const user = await this.AppDataSource.getRepository(User).findOneBy({ id: userId })
+            if (!user)
+                await this.AppDataSource.getRepository(User).save(Object.assign(new User(), { id: userId, token: crypto.randomUUID() }))
+
+            const data = (({ id, owner, ...o }) => o)(chatflow)
+            const newChatFlow = new ChatFlow()
+            Object.assign(newChatFlow, data, { owner: userId })
+            const results = await this.AppDataSource.getRepository(ChatFlow).save(newChatFlow)
+
             return res.json(results)
         })
 
@@ -226,7 +276,8 @@ export class App {
 
         this.app.get('/api/v1/flow-config/:id', async (req: Request, res: Response) => {
             const chatflow = await this.AppDataSource.getRepository(ChatFlow).findOneBy({
-                id: req.params.id
+                id: req.params.id,
+                owner: req.headers.user as string
             })
             if (!chatflow) return res.status(404).send(`Chatflow ${req.params.id} not found`)
             const flowData = chatflow.flowData

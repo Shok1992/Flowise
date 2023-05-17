@@ -40,12 +40,6 @@ const Chatflows = () => {
 
     const getAllChatflowsApi = useApi(chatflowsApi.getAllChatflows)
 
-    const onLoginClick = (username, password) => {
-        localStorage.setItem('username', username)
-        localStorage.setItem('password', password)
-        navigate(0)
-    }
-
     const addNew = () => {
         navigate('/canvas')
     }
@@ -63,9 +57,12 @@ const Chatflows = () => {
     useEffect(() => {
         if (getAllChatflowsApi.error) {
             if (getAllChatflowsApi.error?.response?.status === 401) {
+                const token = localStorage.getItem('token') || crypto.randomUUID()
+                localStorage.setItem('token', token)
                 setLoginDialogProps({
-                    title: 'Login',
-                    confirmButtonName: 'Login'
+                    token: token,
+                    title: 'Sign in',
+                    confirmButtonName: 'Sign in'
                 })
                 setLoginDialogOpen(true)
             }
@@ -130,7 +127,7 @@ const Chatflows = () => {
                     <div>No Chatflows Yet</div>
                 </Stack>
             )}
-            <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} />
+            <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} />
         </MainCard>
     )
 }

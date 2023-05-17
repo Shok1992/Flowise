@@ -9,14 +9,10 @@ const apiClient = axios.create({
 })
 
 apiClient.interceptors.request.use(function (config) {
-    const username = localStorage.getItem('username')
-    const password = localStorage.getItem('password')
+    const token = localStorage.getItem('token')
 
-    if (username && password) {
-        config.auth = {
-            username: username.toLocaleLowerCase(),
-            password: password.toLocaleLowerCase()
-        }
+    if (token) {
+        config.headers['token'] = token
     }
 
     return config

@@ -22,11 +22,6 @@ class OpenAI_LLMs implements INode {
         this.baseClasses = [this.type, ...getBaseClasses(OpenAI)]
         this.inputs = [
             {
-                label: 'OpenAI Api Key',
-                name: 'openAIApiKey',
-                type: 'password'
-            },
-            {
                 label: 'Model Name',
                 name: 'modelName',
                 type: 'options',
@@ -113,7 +108,6 @@ class OpenAI_LLMs implements INode {
     async init(nodeData: INodeData): Promise<any> {
         const temperature = nodeData.inputs?.temperature as string
         const modelName = nodeData.inputs?.modelName as string
-        const openAIApiKey = nodeData.inputs?.openAIApiKey as string
         const maxTokens = nodeData.inputs?.maxTokens as string
         const topP = nodeData.inputs?.topP as string
         const frequencyPenalty = nodeData.inputs?.frequencyPenalty as string
@@ -122,10 +116,9 @@ class OpenAI_LLMs implements INode {
         const batchSize = nodeData.inputs?.batchSize as string
         const bestOf = nodeData.inputs?.bestOf as string
 
-        const obj: Partial<OpenAIInput> & { openAIApiKey?: string } = {
+        const obj: Partial<OpenAIInput> = {
             temperature: parseInt(temperature, 10),
-            modelName,
-            openAIApiKey
+            modelName
         }
 
         if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)

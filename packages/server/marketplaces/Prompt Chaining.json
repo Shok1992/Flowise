@@ -20,12 +20,6 @@
                 "description": "Wrapper around OpenAI large language models",
                 "inputParams": [
                     {
-                        "label": "OpenAI Api Key",
-                        "name": "openAIApiKey",
-                        "type": "password",
-                        "id": "openAI_2-input-openAIApiKey-password"
-                    },
-                    {
                         "label": "Model Name",
                         "name": "modelName",
                         "type": "options",
@@ -366,12 +360,6 @@
                 "category": "LLMs",
                 "description": "Wrapper around OpenAI large language models",
                 "inputParams": [
-                    {
-                        "label": "OpenAI Api Key",
-                        "name": "openAIApiKey",
-                        "type": "password",
-                        "id": "openAI_3-input-openAIApiKey-password"
-                    },
                     {
                         "label": "Model Name",
                         "name": "modelName",

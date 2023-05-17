@@ -22,11 +22,6 @@ class ChatOpenAI_ChatModels implements INode {
         this.baseClasses = [this.type, ...getBaseClasses(ChatOpenAI)]
         this.inputs = [
             {
-                label: 'OpenAI Api Key',
-                name: 'openAIApiKey',
-                type: 'password'
-            },
-            {
                 label: 'Model Name',
                 name: 'modelName',
                 type: 'options',
@@ -103,17 +98,15 @@ class ChatOpenAI_ChatModels implements INode {
     async init(nodeData: INodeData): Promise<any> {
         const temperature = nodeData.inputs?.temperature as string
         const modelName = nodeData.inputs?.modelName as string
-        const openAIApiKey = nodeData.inputs?.openAIApiKey as string
         const maxTokens = nodeData.inputs?.maxTokens as string
         const topP = nodeData.inputs?.topP as string
         const frequencyPenalty = nodeData.inputs?.frequencyPenalty as string
         const presencePenalty = nodeData.inputs?.presencePenalty as string
         const timeout = nodeData.inputs?.timeout as string
 
-        const obj: Partial<OpenAIChatInput> & { openAIApiKey?: string } = {
+        const obj: Partial<OpenAIChatInput> = {
             temperature: parseInt(temperature, 10),
-            modelName,
-            openAIApiKey
+            modelName
         }
 
         if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)

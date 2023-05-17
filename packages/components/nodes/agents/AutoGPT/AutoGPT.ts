@@ -94,4 +94,4 @@ class AutoGPT_Agents implements INode {
     }
 }
 
-module.exports = { nodeClass: AutoGPT_Agents }
+//module.exports = { nodeClass: AutoGPT_Agents }

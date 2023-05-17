@@ -26,14 +26,6 @@ const dashboard = {
             url: '/marketplaces',
             icon: icons.IconBuildingStore,
             breadcrumbs: true
-        },
-        {
-            id: 'apikey',
-            title: 'API Keys',
-            type: 'item',
-            url: '/apikey',
-            icon: icons.IconKey,
-            breadcrumbs: true
         }
     ]
 }

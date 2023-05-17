@@ -5,9 +5,15 @@ export type MessageType = 'apiMessage' | 'userMessage'
 /**
  * Databases
  */
+export interface IUser {
+    id: string
+    token: string
+}
+
 export interface IChatFlow {
     id: string
     name: string
+    owner: string
     flowData: string
     apikeyid: string
     deployed: boolean

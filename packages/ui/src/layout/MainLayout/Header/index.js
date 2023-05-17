@@ -83,8 +83,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     const signOutClicked = () => {
-        localStorage.removeItem('username')
-        localStorage.removeItem('password')
+        localStorage.removeItem('token')
         navigate('/', { replace: true })
         navigate(0)
     }

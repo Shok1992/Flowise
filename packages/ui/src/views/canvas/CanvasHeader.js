@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles'
 import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/material'
 
 // icons
-import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons'
+import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconBrandTelegram } from '@tabler/icons'
 
 // project imports
 import Settings from 'views/settings'
@@ -24,6 +24,8 @@ import useApi from 'hooks/useApi'
 // utils
 import { generateExportFlowData } from 'utils/genericHelper'
 import { uiBaseURL } from 'store/constant'
+
+const { REACT_APP_TELEGRAM_BOT_ID } = process.env
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -85,6 +87,10 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             }
             updateChatflowApi.request(chatflow.id, updateBody)
         }
+    }
+
+    const onRunInTelegramClick = () => {
+        window.open(`https://t.me/${REACT_APP_TELEGRAM_BOT_ID}?start=flow${chatflow.id}`)
     }
 
     const onAPIDialogClick = () => {
@@ -258,7 +264,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             </Box>
             <Box>
                 {chatflow?.id && (
-                    <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2 }}>
+                    <ButtonBase title='Run in Telegram' sx={{ borderRadius: '50%', mr: 2 }}>
                         <Avatar
                             variant='rounded'
                             sx={{
@@ -273,9 +279,9 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 }
                             }}
                             color='inherit'
-                            onClick={onAPIDialogClick}
+                            onClick={onRunInTelegramClick}
                         >
-                            <IconCode stroke={1.5} size='1.3rem' />
+                            <IconBrandTelegram stroke={1.5} size='1.3rem' />
                         </Avatar>
                     </ButtonBase>
                 )}

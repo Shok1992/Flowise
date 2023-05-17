@@ -20,12 +20,6 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "OpenAI Api Key",
-                        "name": "openAIApiKey",
-                        "type": "password",
-                        "id": "chatOpenAI_1-input-openAIApiKey-password"
-                    },
-                    {
                         "label": "Model Name",
                         "name": "modelName",
                         "type": "options",
