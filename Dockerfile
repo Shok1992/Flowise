@@ -4,12 +4,11 @@
 # docker run -d -p 3000:3000 flowise
 FROM node:18-alpine
 
-RUN apk add --no-cache libc6-compat
-
 WORKDIR /usr/src/packages
 
 # Copy root package.json and lockfile
 COPY package.json ./
+COPY yarn.lock ./
 
 # Copy components package.json
 COPY packages/components/package.json ./packages/components/package.json
