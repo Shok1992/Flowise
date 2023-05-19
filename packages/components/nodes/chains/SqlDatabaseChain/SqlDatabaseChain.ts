@@ -3,7 +3,7 @@ import { SqlDatabaseChain, SqlDatabaseChainInput } from 'langchain/chains'
 import { getBaseClasses } from '../../../src/utils'
 import { DataSource } from 'typeorm'
 import { SqlDatabase } from 'langchain/sql_db'
-import { BaseLLM } from 'langchain/llms/base'
+import { BaseLanguageModel } from 'langchain/base_language'
 
 class SqlDatabaseChain_Chains implements INode {
     label: string
@@ -25,9 +25,9 @@ class SqlDatabaseChain_Chains implements INode {
         this.baseClasses = [this.type, ...getBaseClasses(SqlDatabaseChain)]
         this.inputs = [
             {
-                label: 'LLM',
+                label: 'Language Model',
                 name: 'llm',
-                type: 'BaseLLM'
+                type: 'BaseLanguageModel'
             },
             {
                 label: 'Database',
@@ -52,7 +52,7 @@ class SqlDatabaseChain_Chains implements INode {
 
     async init(nodeData: INodeData): Promise<any> {
         const databaseType = nodeData.inputs?.database as 'sqlite'
-        const llm = nodeData.inputs?.llm as BaseLLM
+        const llm = nodeData.inputs?.llm as BaseLanguageModel
         const dbFilePath = nodeData.inputs?.dbFilePath
 
         const chain = await getSQLDBChain(databaseType, dbFilePath, llm)
@@ -61,7 +61,7 @@ class SqlDatabaseChain_Chains implements INode {
 
     async run(nodeData: INodeData, input: string): Promise<string> {
         const databaseType = nodeData.inputs?.database as 'sqlite'
-        const llm = nodeData.inputs?.llm as BaseLLM
+        const llm = nodeData.inputs?.llm as BaseLanguageModel
         const dbFilePath = nodeData.inputs?.dbFilePath
 
         const chain = await getSQLDBChain(databaseType, dbFilePath, llm)
@@ -70,7 +70,7 @@ class SqlDatabaseChain_Chains implements INode {
     }
 }
 
-const getSQLDBChain = async (databaseType: 'sqlite', dbFilePath: string, llm: BaseLLM) => {
+const getSQLDBChain = async (databaseType: 'sqlite', dbFilePath: string, llm: BaseLanguageModel) => {
     const datasource = new DataSource({
         type: databaseType,
         database: dbFilePath

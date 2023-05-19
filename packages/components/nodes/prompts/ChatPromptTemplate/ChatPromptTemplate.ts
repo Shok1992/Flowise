@@ -1,6 +1,7 @@
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
 import { ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate } from 'langchain/prompts'
+import {BaseMessagePromptTemplate} from "langchain/dist/prompts/chat";
 
 class ChatPromptTemplate_Prompts implements INode {
     label: string
@@ -26,14 +27,16 @@ class ChatPromptTemplate_Prompts implements INode {
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
-                placeholder: `You are a helpful assistant that translates {input_language} to {output_language}.`
+                placeholder: `You are a helpful assistant that translates {input_language} to {output_language}.`,
+                optional: true
             },
             {
                 label: 'Human Message',
                 name: 'humanMessagePrompt',
                 type: 'string',
                 rows: 4,
-                placeholder: `{text}`
+                placeholder: `{input}`,
+                default: '{input}'
             },
             {
                 label: 'Format Prompt Values',
@@ -56,10 +59,14 @@ class ChatPromptTemplate_Prompts implements INode {
         const humanMessagePrompt = nodeData.inputs?.humanMessagePrompt as string
         const promptValuesStr = nodeData.inputs?.promptValues as string
 
-        const prompt = ChatPromptTemplate.fromPromptMessages([
-            SystemMessagePromptTemplate.fromTemplate(systemMessagePrompt),
-            HumanMessagePromptTemplate.fromTemplate(humanMessagePrompt)
-        ])
+        const promptMessages: BaseMessagePromptTemplate[] = []
+        if (systemMessagePrompt) {
+            promptMessages.push(SystemMessagePromptTemplate.fromTemplate(systemMessagePrompt))
+        }
+
+        const prompt = ChatPromptTemplate.fromPromptMessages(
+            promptMessages.concat(HumanMessagePromptTemplate.fromTemplate(humanMessagePrompt))
+        )
 
         let promptValues: ICommonObject = {}
         if (promptValuesStr) {

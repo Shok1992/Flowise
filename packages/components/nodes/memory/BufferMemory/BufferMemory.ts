@@ -26,23 +26,15 @@ class BufferMemory_Memory implements INode {
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history'
-            },
-            {
-                label: 'Input Key',
-                name: 'inputKey',
-                type: 'string',
-                default: 'input'
             }
         ]
     }
 
     async init(nodeData: INodeData): Promise<any> {
         const memoryKey = nodeData.inputs?.memoryKey as string
-        const inputKey = nodeData.inputs?.inputKey as string
         return new BufferMemory({
             returnMessages: true,
-            memoryKey,
-            inputKey
+            memoryKey: memoryKey
         })
     }
 }
