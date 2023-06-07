@@ -57,7 +57,7 @@ const Chatflows = () => {
     useEffect(() => {
         if (getAllChatflowsApi.error) {
             if (getAllChatflowsApi.error?.response?.status === 401) {
-                const token = localStorage.getItem('token') || crypto.randomUUID()
+                const token = localStorage.getItem('token') || `flow${crypto.randomUUID()}`
                 localStorage.setItem('token', token)
                 setLoginDialogProps({
                     token: token,
