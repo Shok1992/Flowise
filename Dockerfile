@@ -5,6 +5,9 @@
 FROM node:18-alpine
 RUN apk add --update libc6-compat
 
+ARG REACT_APP_TELEGRAM_BOT_ID
+ENV REACT_APP_TELEGRAM_BOT_ID $REACT_APP_TELEGRAM_BOT_ID
+
 WORKDIR /usr/src/packages
 
 # Copy root package.json and lockfile
