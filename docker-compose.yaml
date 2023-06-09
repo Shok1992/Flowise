@@ -2,7 +2,10 @@ version: "3.4"
 
 services:
   flowise:
-    build: .
+    build:
+      context: .
+      args:
+        REACT_APP_TELEGRAM_BOT_ID: ${REACT_APP_TELEGRAM_BOT_ID}
     image: graphgpt
     restart: always
     ports:
